@@ -3,11 +3,6 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
   `id` int(10) unsigned NOT NULL,
@@ -423,6 +418,33 @@ ALTER TABLE `visitPage`
   ADD CONSTRAINT `visitPage_ibfk_1` FOREIGN KEY (`visitId`) REFERENCES `visit` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+INSERT INTO `TOK` (`key`, `value`, `type`) VALUES
+(0,	'Nepřihlášený',	'pe'),
+(1,	'Přihlášený uživatel',	'pe'),
+(2,	'Čtenář',	'pe'),
+(3,	'Redaktor',	'pe'),
+(4,	'Hlavní redaktor',	'pe'),
+(5,	'Administrátor',	'pe'),
+(6,	'Superadministrátor',	'pe'),
+(10,	'Nový',	'ts'),
+(11,	'Akceptovaný',	'ts'),
+(12,	'Odložený',	'ts'),
+(13,	'Duplicitní',	'ts'),
+(14,	'Vyřešený',	'ts'),
+(15,	'Uzavřený',	'ts'),
+(16,	'Zamítnutý',	'ts'),
+(20,	'systém',	'tt'),
+(21,	'administrace webu',	'tt'),
+(30,	'Nejnižší',	'pr'),
+(31,	'Nízká',	'pr'),
+(32,	'Normální',	'pr'),
+(33,	'Vysoká',	'pr'),
+(34,	'Nejvyšší',	'pr'),
+(40,	'Nejnižší',	'ep'),
+(41,	'Nízká',	'ep'),
+(42,	'Střední',	'ep'),
+(50,	'manuální',	'ds'),
+(51,	'registrace přes web',	'ds'),
+(60,	'Veřejné informace o systému',	'dc'),
+(61,	'Interní informace o sysému',	'dc');
+

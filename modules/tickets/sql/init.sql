@@ -3,12 +3,6 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
-
 DROP TABLE IF EXISTS `ticket`;
 CREATE TABLE `ticket` (
   `id` int(10) unsigned NOT NULL,
@@ -32,6 +26,17 @@ CREATE TABLE `ticketAssignement` (
   `working` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Works this user currently on this task?'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Assignements of tickets to persons';
 
+CREATE TABLE `ticket_version` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(127) COLLATE utf8_czech_ci NOT NULL,
+  `description` text COLLATE utf8_czech_ci,
+  `creationDate` datetime DEFAULT NULL,
+  `pid` int(10) unsigned NOT NULL COMMENT 'Reporter of this version',
+  PRIMARY KEY (`id`),
+  KEY `pid` (`pid`),
+  CONSTRAINT `ticket_version_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `person` (`pid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
 DROP TABLE IF EXISTS `ticketWork`;
 CREATE TABLE `ticketWork` (
   `id` int(10) unsigned NOT NULL,
@@ -41,7 +46,6 @@ CREATE TABLE `ticketWork` (
   `comment` varchar(256) COLLATE utf8_czech_ci DEFAULT NULL COMMENT 'Short comment for the work',
   `date` date NOT NULL COMMENT 'Day when worked'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci COMMENT='Points which person worked on some ticket in the day';
-
 
 ALTER TABLE `ticket`
   ADD PRIMARY KEY (`id`),
@@ -76,7 +80,7 @@ ALTER TABLE `ticket`
   ADD CONSTRAINT `ticket_ibfk_3` FOREIGN KEY (`state`) REFERENCES `TOK` (`key`) ON UPDATE CASCADE,
   ADD CONSTRAINT `ticket_ibfk_4` FOREIGN KEY (`reporter`) REFERENCES `user` (`pid`) ON UPDATE CASCADE,
   ADD CONSTRAINT `ticket_ibfk_5` FOREIGN KEY (`type`) REFERENCES `TOK` (`key`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `ticket_ibfk_6` FOREIGN KEY (`versionId`) REFERENCES `version` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `ticket_ibfk_6` FOREIGN KEY (`versionId`) REFERENCES `ticket_version` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `ticket_ibfk_7` FOREIGN KEY (`tmpOwner`) REFERENCES `person` (`pid`) ON UPDATE CASCADE;
 
 ALTER TABLE `ticketAssignement`
@@ -87,6 +91,3 @@ ALTER TABLE `ticketWork`
   ADD CONSTRAINT `ticketWork_ibfk_2` FOREIGN KEY (`pid`) REFERENCES `person` (`pid`);
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
