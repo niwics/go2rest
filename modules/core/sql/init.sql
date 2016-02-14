@@ -238,15 +238,6 @@ CREATE TABLE `visitByUser` (
   `pid` int(10) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
-DROP TABLE IF EXISTS `visitPage`;
-CREATE TABLE `visitPage` (
-  `visitId` int(10) unsigned NOT NULL COMMENT 'Reference visit.id',
-  `menuItemId` int(10) unsigned NOT NULL,
-  `tailAndSpice` varchar(256) COLLATE utf8_czech_ci DEFAULT NULL COMMENT 'Meaningful end of URL (tail and spice parameters)',
-  `request` text COLLATE utf8_czech_ci COMMENT 'Dump of GET, POST and SESSION variables',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
-
 DROP TABLE IF EXISTS `website`;
 CREATE TABLE `website` (
   `id` int(10) unsigned NOT NULL,
@@ -259,7 +250,7 @@ CREATE TABLE `website` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci COMMENT='Web section (ex. "admin.domain.com")';
 DROP TABLE IF EXISTS `personView`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`a8095_niwi`@`%` SQL SECURITY DEFINER VIEW `personView` AS select `p`.`pid` AS `pid`,`u`.`username` AS `username`,(concat_ws(' ',if((`p`.`secondaryName` = ''),NULL,`p`.`secondaryName`),if((`p`.`name` = ''),NULL,`p`.`name`)) collate utf8_czech_ci) AS `fullName`,`p`.`name` AS `name`,`p`.`secondaryName` AS `secondaryName`,`p`.`titleBefore` AS `titleBefore`,`p`.`titleAfter` AS `titleAfter`,`p`.`email` AS `email`,`t`.`value` AS `dataSource`,`w`.`name` AS `sourceWebsite`,`p`.`insertionDate` AS `insertionDate`,`p`.`profileViews` AS `profileViews`,`p`.`systemState` AS `systemState`,`d`.`city` AS `city`,`d`.`street` AS `street`,`d`.`houseNumber` AS `houseNumber`,`d`.`zip` AS `zip`,`d`.`country` AS `country`,`d`.`description` AS `description`,`d`.`note` AS `note`,`u`.`urlName` AS `urlName`,`u`.`registrationDate` AS `registrationDate`,`d`.`correspondentNumber` AS `correspondentNumber`,`d`.`memberNumber` AS `memberNumber`,`d`.`sex` AS `sex`,`d`.`dateOfBirth` AS `dateOfBirth`,`d`.`nicks` AS `nicks`,`d`.`secondaryEmail` AS `secondaryEmail`,`d`.`phone` AS `phone`,`d`.`facebook` AS `facebook`,`d`.`im` AS `im`,`d`.`skype` AS `skype`,`d`.`website` AS `website`,`d`.`image` AS `image` from ((((`person` `p` left join `user` `u` on((`p`.`pid` = `u`.`pid`))) left join `personDetail` `d` on((`p`.`pid` = `d`.`pid`))) left join `TOK` `t` on((`p`.`dataSource` = `t`.`key`))) left join `website` `w` on((`p`.`sourceWebsite` = `w`.`id`)));
+CREATE VIEW `personView` AS select `p`.`pid` AS `pid`,`u`.`username` AS `username`,(concat_ws(' ',if((`p`.`secondaryName` = ''),NULL,`p`.`secondaryName`),if((`p`.`name` = ''),NULL,`p`.`name`)) collate utf8_czech_ci) AS `fullName`,`p`.`name` AS `name`,`p`.`secondaryName` AS `secondaryName`,`p`.`titleBefore` AS `titleBefore`,`p`.`titleAfter` AS `titleAfter`,`p`.`email` AS `email`,`t`.`value` AS `dataSource`,`w`.`name` AS `sourceWebsite`,`p`.`insertionDate` AS `insertionDate`,`p`.`profileViews` AS `profileViews`,`p`.`systemState` AS `systemState`,`d`.`city` AS `city`,`d`.`street` AS `street`,`d`.`houseNumber` AS `houseNumber`,`d`.`zip` AS `zip`,`d`.`country` AS `country`,`d`.`description` AS `description`,`d`.`note` AS `note`,`u`.`urlName` AS `urlName`,`u`.`registrationDate` AS `registrationDate`,`d`.`correspondentNumber` AS `correspondentNumber`,`d`.`memberNumber` AS `memberNumber`,`d`.`sex` AS `sex`,`d`.`dateOfBirth` AS `dateOfBirth`,`d`.`nicks` AS `nicks`,`d`.`secondaryEmail` AS `secondaryEmail`,`d`.`phone` AS `phone`,`d`.`facebook` AS `facebook`,`d`.`im` AS `im`,`d`.`skype` AS `skype`,`d`.`website` AS `website`,`d`.`image` AS `image` from ((((`person` `p` left join `user` `u` on((`p`.`pid` = `u`.`pid`))) left join `personDetail` `d` on((`p`.`pid` = `d`.`pid`))) left join `TOK` `t` on((`p`.`dataSource` = `t`.`key`))) left join `website` `w` on((`p`.`sourceWebsite` = `w`.`id`)));
 
 
 ALTER TABLE `comment`
@@ -342,9 +333,6 @@ ALTER TABLE `visitByUser`
   ADD KEY `pid` (`pid`),
   ADD KEY `websiteId` (`websiteId`);
 
-ALTER TABLE `visitPage`
-  ADD KEY `visitId` (`visitId`);
-
 ALTER TABLE `website`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
@@ -414,9 +402,6 @@ ALTER TABLE `visitByUser`
   ADD CONSTRAINT `visitByUser_ibfk_1` FOREIGN KEY (`pid`) REFERENCES `person` (`pid`),
   ADD CONSTRAINT `visitByUser_ibfk_2` FOREIGN KEY (`websiteId`) REFERENCES `website` (`id`);
 
-ALTER TABLE `visitPage`
-  ADD CONSTRAINT `visitPage_ibfk_1` FOREIGN KEY (`visitId`) REFERENCES `visit` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
 
 INSERT INTO `TOK` (`key`, `value`, `type`) VALUES
 (0,	'Nepřihlášený',	'pe'),
